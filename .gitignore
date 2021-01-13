@@ -1,7 +1,7 @@
-/media
+/media/book
+/media/users
 **/migrations/*
-*.sqlite3 
+
 /.vscode
 /front
 *.log
-**/__pycache__/**
