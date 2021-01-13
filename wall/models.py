@@ -1,4 +1,7 @@
 from django.db import models
+from django.contrib.auth import get_user_model
+from django.core.validators import MaxValueValidator, MinValueValidator
+
 
 def book_poster(instance, filename):
     return f'book/poster/{instance.title}/{filename}'
@@ -37,12 +40,15 @@ class Types(models.Model):
         return self.title
 
 
+
+
 class Book(models.Model):
     STATUS=(
         ('end', 'end'),
         ('continue','continue')
     )
 
+    likes=models.ManyToManyField(get_user_model(), blank=True, verbose_name='Лайки', related_name='books_like')
     title=models.TextField(verbose_name='Название')
     description=models.TextField(verbose_name='Описание')
     category=models.ManyToManyField(Category, verbose_name="Категория")
@@ -51,10 +57,21 @@ class Book(models.Model):
     views=models.PositiveIntegerField(default=0, verbose_name='Количество просмотров')
     created_date=models.PositiveIntegerField(null=True, blank=True, verbose_name='Дата добавление')
     status=models.TextField(choices=STATUS, null=True, blank=True, verbose_name="Статус")
-    poster=models.ImageField(upload_to=book_poster, verbose_name='Главаня картинка')
+    poster=models.ImageField(upload_to=book_poster, verbose_name='Главная картинка')
+    average_rating=models.PositiveIntegerField(default=0, verbose_name='Рейтинг', validators=[MaxValueValidator(5), MinValueValidator(0)])
 
     def __str__(self):
         return self.title
+
+
+    def get_average_rating(self):
+        value = 0
+        count = self.rating.count()
+        for i in self.rating.all():
+            value += i.star.value
+        if count == 0:
+            count = 1
+        return value//count
 
     class Meta:
         verbose_name='Манхва или Манга'
@@ -75,13 +92,43 @@ class Chapter(models.Model):
         return self.title
 
 
-class Page(models.Model):
-    picture=models.ImageField(upload_to=page, verbose_name='Страница')
-    chapter=models.ForeignKey(Chapter, on_delete=models.CASCADE,verbose_name='Глава')
 
+
+class Page(models.Model):
+    chapter=models.ForeignKey(Chapter, on_delete=models.CASCADE,verbose_name='Глава', related_name='page')
+    picture=models.ImageField(upload_to=page, verbose_name='Страница', null=True)
     class Meta:
         verbose_name='Страница'
         verbose_name_plural='Страницы'
 
     def __str__(self):
         return f'{self.chapter.title}'
+
+
+
+class RatingStars(models.Model):
+    value = models.IntegerField(null=True)
+
+    def __str__(self):
+        value = str(self.value)
+        return value
+
+    class Meta:
+        verbose_name='Звезды для рейтинга'
+        verbose_name_plural='Звезды для рейтинга'
+
+
+class Rating(models.Model):
+    star = models.ForeignKey(RatingStars, on_delete=models.CASCADE, default=0)
+    user = models.ForeignKey(get_user_model(), on_delete=models.CASCADE)
+    text=models.TextField(null=True, blank=True)
+    book = models.ForeignKey(
+        Book, on_delete=models.CASCADE, related_name='rating')
+
+    class Meta:
+        verbose_name='Рейтинг'
+        verbose_name_plural='Рейтинг'
+
+    def __str__(self):
+        star = str(self.star)
+        return star

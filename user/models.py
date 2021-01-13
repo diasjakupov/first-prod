@@ -10,9 +10,13 @@ class User(AbstractUser):
         ('female', 'female')
         )
 
+
     gender=models.CharField(max_length=300, choices=gender_choices, null=True, blank=True)
     image = models.ImageField(
         upload_to=DefineUserPathImages,
         null=True,
         blank=True,
         default='default/def.jpg')
+    created_date=models.DateTimeField(null=True, auto_now_add=True)
+
+    REQUIRED_FIELDS = ['gender', 'first_name']

@@ -1,3 +1,7 @@
 /media
-/vscode
-db.sqlite3
+**/migrations/*
+*.sqlite3 
+/.vscode
+/front
+*.log
+**/__pycache__/**
