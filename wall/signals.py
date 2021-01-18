@@ -35,14 +35,15 @@ def delete_poster(sender, instance, **kwargs):
 def pars_pages(sender, instance, created, **kwargs):
     if created and instance.url is not None:
         url=instance.url
-        p=Parser()
-        data = p.start(url, True)
-        count=1
-        for index, data_list in enumerate(data):
-            p_path=download_page(instance, data_list, count)
-            idx=p_path.find(f'\\book\\')
-            count +=1
-            page=Page.objects.create(chapter=instance, picture=p_path)
+        if instance.url:
+            p=Parser()
+            data = p.start(url, True)
+            count=1
+            for index, data_list in enumerate(data):
+                p_path=download_page(instance, data_list, count)
+                idx=p_path.find(f'\\book\\')
+                count +=1
+                page=Page.objects.create(chapter=instance, picture=p_path)
             
 
 
