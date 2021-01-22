@@ -24,6 +24,9 @@ class PrivateUserViewSet(generics.RetrieveUpdateDestroyAPIView, mixins.CreateMod
         obj=self.get_queryset()
         return obj
 
+    def put(self,request, *args, **kwargs):
+        return super().partial_update(request, *args, **kwargs)
+
     def post(self, request, *args, **kwargs):
         user=self.request.user
         user.image=request.data['image']

@@ -90,7 +90,7 @@ class Parser:
         if isStart:
             chrome_options = Options()  
             chrome_options.add_argument("--headless")  
-            driver=webdriver.Chrome(ChromeDriverManager().install())
+            driver=webdriver.Chrome(ChromeDriverManager().install(), chrome_options=chrome_options)
             driver.set_window_size(1366, 768)
             data=self.get_data(driver, link)
             driver.close()

@@ -4,7 +4,7 @@ from.views import (
     PageViewSet, ChapterList, 
     AllListChapters, TypesList,
     GenreList, CategoryList,
-    BookList, DetailBookview, getReviewsById)
+    BookList, DetailBookview, getReviewsById,ChapterWPList)
 
 
 urlpatterns = [
@@ -18,5 +18,6 @@ urlpatterns = [
     path('category', CategoryList.as_view()),
     path('chapter/<int:pk>', PageViewSet.as_view({'get': 'retrieve'})),
     path('book-detail-c/<int:pk>', ChapterList.as_view()),
-    path('book-review/<int:pk>', getReviewsById.as_view())
+    path('book-review/<int:pk>', getReviewsById.as_view()),
+    path('chapter-wp/<int:pk>', ChapterWPList.as_view())
 ]

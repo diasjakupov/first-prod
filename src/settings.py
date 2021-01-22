@@ -144,9 +144,8 @@ REST_FRAMEWORK = {
         "rest_framework.authentication.SessionAuthentication",
         'rest_framework_simplejwt.authentication.JWTAuthentication',
     ),
-    'DEFAULT_RENDERER_CLASSES': [
-        'rest_framework.renderers.JSONRenderer',
-    ]
+    'DATETIME_FORMAT': "%Y-%m-%dT%H:%M:%S.%fZ",
+
 }
 
 SIMPLE_JWT = {

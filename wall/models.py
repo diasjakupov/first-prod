@@ -80,8 +80,9 @@ class Book(models.Model):
 
 class Chapter(models.Model):
     book=models.ForeignKey(Book, on_delete=models.CASCADE, related_name='chapter',verbose_name='Манга или манхва')
+    chapter_num=models.CharField(max_length=500,verbose_name='Номер главы (пример: Глава 1)', null=True, blank=True)
     title=models.CharField(max_length=500, verbose_name='Название главы')
-    url=models.TextField(verbose_name='Ссылка на главу', null=True, blank=True)
+    url=models.URLField(verbose_name='Ссылка на главу', null=True, blank=True)
     created_date=models.DateField(auto_now_add=True, null=True, blank=True)
 
     class Meta:

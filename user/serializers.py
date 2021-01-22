@@ -25,6 +25,5 @@ class PrivateUserSerializer(ModelSerializer):
     class Meta:
         model = User
         fields=['id','username','first_name','date_joined','gender','image','books_like']
-        read_only_fields = ['date_joined','books_like'
-                            ]
+        read_only_fields = ['date_joined','books_like']
 

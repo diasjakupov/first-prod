@@ -18,7 +18,7 @@ class ChapterPagination(pagination.PageNumberPagination):
          ]))
 
 class BookPagination(pagination.PageNumberPagination):
-    page_size = 15
+    page_size = 25
 
 
     def get_paginated_response(self, data):

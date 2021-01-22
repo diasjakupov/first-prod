@@ -17,15 +17,38 @@ class PageSerializer(ModelSerializer):
 
 class ChapterSerializer(ModelSerializer):
     book=BookSerializer()
+    created_date=serializers.DateField(format="iso-8601")
     class Meta:
         model = Chapter
-        fields=['id','book','title', 'created_date']
+        fields=['id','book','chapter_num','title', 'created_date']
 
 class ChapterDetailSerializer(ModelSerializer):
     page=PageSerializer(many=True)
+    book=BookSerializer()
+    next_chapter=serializers.SerializerMethodField(method_name="get_next")
+    previous_chapter=serializers.SerializerMethodField(method_name="get_previous")
     class Meta:
         model = Chapter
-        fields=['title', 'created_date','page']
+        fields=['id','title','chapter_num','next_chapter','previous_chapter', 'created_date','book','page']
+
+    def get_next(self, obj):
+        qs=Chapter.objects.filter(book=obj.book)
+        next_qs=qs.filter(id__gt=obj.id).order_by('id')
+        try: 
+            next_cp=next_qs[0]
+            return next_cp.id
+        except IndexError:
+            return None
+
+    def get_previous(self, obj):
+        qs=Chapter.objects.filter(book=obj.book)
+        pr_qs=qs.filter(id__lt=obj.id).order_by('-id')
+        try:
+            previous_cp=pr_qs[0]
+            return previous_cp.id
+        except IndexError:
+            return None
+
 
 
 class TypeGenreCatSerializer(serializers.Serializer):

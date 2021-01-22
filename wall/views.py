@@ -96,7 +96,17 @@ class ChapterList(generics.ListAPIView):
     pagination_class=ChapterPagination
 
     def get_queryset(self):
-        return Chapter.objects.filter(book_id=self.kwargs['pk']).order_by('-created_date')
+        return Chapter.objects.filter(book_id=self.kwargs['pk']).order_by('-created_date').prefetch_related('book')
+
+
+class ChapterWPList(generics.ListAPIView):
+    """
+    Список глав определенной книги без пагинации
+    """
+    serializer_class = ChapterSerializer
+
+    def get_queryset(self):
+        return Chapter.objects.filter(book_id=self.kwargs['pk']).prefetch_related('book')
 
 class AllListChapters(ModelViewSet):
     """

@@ -1,4 +1,4 @@
-from django.db.models.signals import post_save, post_delete, pre_delete
+from django.db.models.signals import post_save, post_delete, pre_delete,pre_save
 from .models import Book, Chapter, Page, Rating
 from django.dispatch import receiver
 from PIL import Image
@@ -32,8 +32,8 @@ def delete_poster(sender, instance, **kwargs):
     os.remove(instance.poster.path)
 
 @receiver(post_save, sender=Chapter)
-def pars_pages(sender, instance, created, **kwargs):
-    if created and instance.url is not None:
+def pars_pages(sender, instance,created, **kwargs):
+    if created:
         url=instance.url
         if instance.url:
             p=Parser()
@@ -44,6 +44,24 @@ def pars_pages(sender, instance, created, **kwargs):
                 idx=p_path.find(f'\\book\\')
                 count +=1
                 page=Page.objects.create(chapter=instance, picture=p_path)
+
+@receiver(pre_save, sender=Chapter)
+def pars_pages(sender, instance,**kwargs):
+    pk=instance.id
+    try:
+        pre_url=Chapter.objects.get(pk=pk).url
+        url=instance.url
+        if instance.url!=pre_url:
+            p=Parser()
+            data = p.start(url, True)
+            count=1
+            for index, data_list in enumerate(data):
+                p_path=download_page(instance, data_list, count)
+                idx=p_path.find(f'\\book\\')
+                count +=1
+                page=Page.objects.create(chapter=instance, picture=p_path)
+    except:
+        return
             
 
 
