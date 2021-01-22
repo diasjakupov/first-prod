@@ -8,16 +8,18 @@ import requests
 import os
 
 path=os.path.dirname(os.path.abspath('media'))
+print(path)
 
 def download_page(chapter_name, link, count):
     request=requests.get(link)
     content=request.content
-    p_path=os.path.join(f'{path}\media\\book\pages', f'{chapter_name.book.title}-{chapter_name.title}-страница-{count}.jpeg')
-    
-    with open(p_path, 'wb') as file:
-        file.write(content)
+    imageName=f'{chapter_name.book.title}-{chapter_name.title}-страница-{count}.jpeg'
+    p_path=os.path.join(f'{path}\media\\book\pages', imageName)
+    file1 = open(p_path, "wb")
+    file1.write(content)
+    file1.close()
 
-    return p_path
+    return f'\\book\pages\{imageName}'
 
 @receiver(post_save, sender=Book)
 def change_size_of_poster(sender, instance, created, **kwargs):
@@ -67,8 +69,10 @@ def pars_pages(sender, instance,**kwargs):
 
 @receiver(post_delete, sender=Page)
 def delete_pages(sender, instance, **kwargs):
-    print(instance.picture.path)
-    os.remove(instance.picture.path)
+    try:
+        os.remove(instance.picture.path)
+    except:
+        print('error')
 
 @receiver(post_save, sender=Rating)
 def save_av_rating(sender, instance, created, **kwargs):

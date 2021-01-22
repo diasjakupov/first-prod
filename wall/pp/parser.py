@@ -9,7 +9,6 @@ import os
 
 class Parser:
     def login(self, driver,button):
-        driver.save_screenshot("login.png")
         button.click()
         time.sleep(1)
         login_input=driver.find_element_by_id('login')

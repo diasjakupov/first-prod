@@ -12,7 +12,7 @@ ChapterSerializer,
 TypeGenreCatSerializer,RatingSerializer)
 from .filter import BookFilter
 from .paginations import ChapterPagination, BookPagination 
-
+import os
 from django.db.models import F
 from django_filters.rest_framework import DjangoFilterBackend
 from django.contrib.auth import get_user_model
@@ -38,6 +38,7 @@ class BookViewSet(ModelViewSet):
             return [permission() for permission in self.permission_classes]
 
     def retrieve(self, request, pk):
+        os.path.dirname(os.path.abspath('media'))
         book=Book.objects.prefetch_related('chapter', 'category','genre','types', 'rating', 'rating__star').get(pk=pk)
         serializer=DetailBookSerializer(book)
         return Response(serializer.data)
@@ -96,6 +97,7 @@ class ChapterList(generics.ListAPIView):
     pagination_class=ChapterPagination
 
     def get_queryset(self):
+        
         return Chapter.objects.filter(book_id=self.kwargs['pk']).order_by('-created_date').prefetch_related('book')
 
 
